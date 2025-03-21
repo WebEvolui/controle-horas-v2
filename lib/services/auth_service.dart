@@ -24,12 +24,12 @@ class AuthService {
 
   Future<String?> cadastrarUsuario({
     required String email,
-    required String Senha,
+    required String senha,
     required String nome,
   }) async {
     try {
       UserCredential userCredential = await _firebaseAuth
-          .createUserWithEmailAndPassword(email: email, password: Senha);
+          .createUserWithEmailAndPassword(email: email, password: senha);
 
       await userCredential.user!.updateDisplayName(nome);
     } on FirebaseAuthException catch (e) {

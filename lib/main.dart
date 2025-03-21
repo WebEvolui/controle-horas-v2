@@ -1,5 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:controle_hora_v2/screens/login_screen.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -22,7 +23,9 @@ Future<void> main() async {
 Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
   await Firebase.initializeApp();
   
-  print('### Handling a background message ${message.messageId}');
+  if (kDebugMode) {
+    print('### Handling a background message ${message.messageId}');
+  }
 }
 
 class MyApp extends StatelessWidget {
