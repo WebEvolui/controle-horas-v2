@@ -3,8 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:controle_hora_v2/screens/register_screen.dart';
 import 'package:controle_hora_v2/screens/reset_password_modal.dart';
-
 import '../services/auth_service.dart';
+import 'package:flutter/foundation.dart';
 
 class LoginScreen extends StatelessWidget {
   LoginScreen({super.key});
@@ -104,13 +104,20 @@ class LoginScreen extends StatelessWidget {
   }
 
   Future<UserCredential> singinWithGoogle() async {
-    final GoogleSignInAccount? googleUser = await GoogleSignIn().signIn();
-    final GoogleSignInAuthentication googleAuth =
-        await googleUser!.authentication;
-    final credential = GoogleAuthProvider.credential(
-      accessToken: googleAuth.accessToken,
-      idToken: googleAuth.idToken,
-    );
-    return await FirebaseAuth.instance.signInWithCredential(credential);
+    if (kIsWeb) {
+      // Na web usa popup
+      final GoogleAuthProvider googleProvider = GoogleAuthProvider();
+      return await FirebaseAuth.instance.signInWithPopup(googleProvider);
+    } else {
+      // No mobile usa o fluxo normal
+      final GoogleSignInAccount? googleUser = await GoogleSignIn().signIn();
+      final GoogleSignInAuthentication googleAuth =
+      await googleUser!.authentication;
+      final credential = GoogleAuthProvider.credential(
+        accessToken: googleAuth.accessToken,
+        idToken: googleAuth.idToken,
+      );
+      return await FirebaseAuth.instance.signInWithCredential(credential);
+    }
   }
 }

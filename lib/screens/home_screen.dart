@@ -11,7 +11,7 @@ import '../models/hour.dart';
 
 class HomeScreen extends StatefulWidget {
   final User user;
-  String titulo = 'Horas V3';
+  String titulo = 'Horas V2';
 
   HomeScreen({super.key, required this.user});
 
@@ -241,7 +241,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
     setState(() {
       listHours = temp;
-      widget.titulo = 'Horas V3 - Total: ${horas.inHours.toString()}h:${horas.inMinutes.remainder(60).toString().padLeft(2, '0')}';
+      widget.titulo = 'Horas V2 - Total: ${horas.inHours.toString()}h:${horas.inMinutes.remainder(60).toString().padLeft(2, '0')}';
     });
   }
 }
