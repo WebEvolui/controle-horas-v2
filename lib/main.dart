@@ -10,19 +10,26 @@ import 'screens/home_screen.dart';
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
-  await Firebase.initializeApp(
-    options: DefaultFirebaseOptions.currentPlatform,
-  );
+  if (Firebase.apps.isEmpty) {
+    await Firebase.initializeApp(
+      options: DefaultFirebaseOptions.currentPlatform,
+    );
+  }
 
-  FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
+  if (!kIsWeb) {
+    FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
+  }
 
-  runApp( MyApp());
+  runApp(MyApp());
 }
 
 @pragma('vm:entry-point')
 Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
-  await Firebase.initializeApp();
-  
+  if (Firebase.apps.isEmpty) {
+    await Firebase.initializeApp(
+      options: DefaultFirebaseOptions.currentPlatform,
+    );
+  }
   if (kDebugMode) {
     print('### Handling a background message ${message.messageId}');
   }
@@ -31,7 +38,6 @@ Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
 
-  // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -51,18 +57,19 @@ class RoteadorTelas extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return StreamBuilder(stream: FirebaseAuth.instance.userChanges(), builder: (context, snapshot) {
-      if(snapshot.connectionState == ConnectionState.waiting) {
-        return const Center(
-          child: CircularProgressIndicator(),
-        );
-      } else {
-        if(snapshot.hasData) {
-          return HomeScreen(user: snapshot.data!);
+    return StreamBuilder(
+      stream: FirebaseAuth.instance.userChanges(),
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return const Center(child: CircularProgressIndicator());
         } else {
-          return LoginScreen();
+          if (snapshot.hasData) {
+            return HomeScreen(user: snapshot.data!);
+          } else {
+            return LoginScreen();
+          }
         }
-      }
-    });
+      },
+    );
   }
 }
